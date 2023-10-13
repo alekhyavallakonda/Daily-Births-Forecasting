@@ -1,0 +1,53 @@
+#Installing prophet
+#%%capture
+!pip install prophet
+
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from prophet import Prophet
+
+# Reading the dataframe
+
+df = pd.read_csv('../input/daily-total-female-births-in-california-1959/daily-total-female-births-CA.csv')
+display(df.head())
+display(df.tail())
+
+#Plotting the line chart
+df.plot(figsize=(16,5))
+
+#Renaming the columns acc to the libaray req
+
+df.columns = ['ds','y']
+df.head()
+
+#converting the ds column into date time format
+
+df['ds'] = pd.to_datetime(df['ds'])
+
+#to have a look at all the functions available inside the prophet library
+
+dir(Prophet)
+# Initialize the Model
+
+model=Prophet()
+df.dropna(axis=0,inplace=True)
+display(df)
+#Fitting the model
+model.fit(df)
+df.tail()
+
+### Create future dates of 365 days
+
+future_dates=model.make_future_dataframe(periods=365)
+display(future_dates)
+#Making the Prediction
+
+prediction=model.predict(future_dates)
+# Displaying the Prediction
+display(prediction)
+### plot the predicted projection
+model.plot(prediction)
+#### Visualize Each Components[Trends,yearly]
+model.plot_components(prediction)
